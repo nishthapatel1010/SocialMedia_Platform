@@ -24,7 +24,7 @@ const User = ({ person }) => {
               ? publicFolder + person.profilePicture
               : publicFolder + "defaultProfile.png"
           }
-          alt="profile"
+          alt="Profile"
           className="followerImage"
         />
         <div className="name">
