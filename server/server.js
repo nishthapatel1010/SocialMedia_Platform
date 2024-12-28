@@ -1,28 +1,58 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const connectDB = require('./config/db'); // Import MongoDB connection
-const authRoute = require('./Routes/AuthRoute'); // Ensure the path is correct
-const userRoute = require('./Routes/UserRoute'); // Ensure the path is correct
-const postRoute= require('./Routes/PostRoute')
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const portfinder = require("portfinder");
 
-require('dotenv').config(); // Load environment variables
+// Import the connectDB function from dbConnection.js
+const connectDB = require('./config/db');
 
-// Initialize the Express app
+// routes
+const AuthRoute = require('./routes/AuthRoute');
+const UserRoute = require('./routes/UserRoute');
+const PostRoute = require('./routes/PostRoute');
+const UploadRoute = require('./routes/UploadRoute');
+const ChatRoute = require('./routes/ChatRoute');
+const MessageRoute = require('./routes/MessageRoute');
+
 const app = express();
 
-// Middleware to parse incoming JSON requests
-app.use(express.json()); // You can use express's built-in middleware to parse JSON (no need for body-parser)
+// middleware
+app.use(bodyParser.json({ limit: "30mb", extended: true }));
+app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(cors());
+// to serve images inside public folder
+app.use(express.static('public'));
+app.use('/images', express.static('images'));
 
-// Connect to MongoDB
+// Load environment variables
+dotenv.config();
+
+// Debugging: check if the MongoDB connection string is loaded correctly
+console.log("MongoDB URL:", process.env.MONGO_URL);  // Make sure this is not undefined
+
+// Call connectDB function to establish MongoDB connection
 connectDB();
 
 // Use routes
-app.use('/auth', authRoute); // This will prefix all routes from authRoute with /auth
-app.use('/user', userRoute); // This will prefix all routes from authRoute with /auth
-app.use('/post', postRoute); // This will prefix all routes from authRoute with /auth
+app.use('/auth', AuthRoute);
+app.use('/user', UserRoute);
+app.use('/posts', PostRoute);
+app.use('/upload', UploadRoute);
+app.use('/chat', ChatRoute);
+app.use('/message', MessageRoute);
 
-// Start the server
-const PORT = process.env.PORT || 5500;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Set the initial port or fallback to 5500
+const initialPort = process.env.PORT || 5500;
+
+// Use portfinder to find an available port
+portfinder.getPortPromise({ port: initialPort })
+  .then((port) => {
+    // Start the server on the found port
+    app.listen(port, () => {
+      console.log(`Listening at Port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Error finding an available port:', err);
+  });

@@ -1,11 +1,10 @@
-const mongoose = require("mongoose");
-// Define a schema for User
-const userSchema = new mongoose.Schema(
+const mongoose = require('mongoose');
+
+const UserSchema = mongoose.Schema(
   {
     username: {
       type: String,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
@@ -23,19 +22,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    ProfilePicture: String,
+    profilePicture: String,
     coverPicture: String,
     about: String,
-    livesin: String,
+    livesIn: String,
     worksAt: String,
     relationship: String,
+    country: String,
     followers: [],
-    followings: [],
+    following: [],
   },
   { timestamps: true }
 );
 
-// Create a model based on the schema
-const User = mongoose.model("User", userSchema);
-
-module.exports = User;
+const UserModel = mongoose.model("Users", UserSchema);
+module.exports = UserModel;

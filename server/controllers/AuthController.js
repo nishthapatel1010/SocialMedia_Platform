@@ -1,9 +1,3 @@
-// Routes/AuthRoute.js
-const express = require('express');
-const bcrypt = require('bcryptjs'); // To hash passwords
-const jwt = require('jsonwebtoken'); // For generating tokens
-const User = require('../Models/userModel'); // Import User model
-
 const registeruser = async (req, res) => {
   const { username, password, firstname, lastname } = req.body;
 
@@ -47,6 +41,7 @@ const registeruser = async (req, res) => {
     res.status(500).json({ message: 'Server error, please try again later.' });
   }
 };
+
 const loginuser = async (req, res) => {
   const { username, password } = req.body;
 
@@ -79,10 +74,17 @@ const loginuser = async (req, res) => {
     res.status(200).json({
       message: 'Login successful!',
       token, // Send the token to the client
+      user: {
+        id: user._id,
+        username: user.username,
+        firstname: user.firstname,
+        lastname: user.lastname,
+      },
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error, try again later.' });
   }
 };
-module.exports = { registeruser,loginuser };
+
+module.exports = { registeruser, loginuser };

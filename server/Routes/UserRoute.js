@@ -1,13 +1,14 @@
 const express = require('express');
+const { deleteUser, followUser, getAllUsers, getUser, unfollowUser, updateUser } = require('../controllers/UserController');
+const authMiddleWare = require('../middleware/AuthMiddleware');
+
 const router = express.Router();
-const {getUser,updateUser,deleteUser, followUser, UnfollowUser}=require('../controllers/UserController');
 
-// Define the route to respond with "user route"
-router.get('/:id',getUser);
-router.put('/:id',updateUser);
-router.delete('/:id',deleteUser);
-router.put('/:id/follow',followUser);
-router.put('/:id/unfollow',UnfollowUser);
+router.get('/:id', getUser);
+router.get('/', getAllUsers);
+router.put('/:id', authMiddleWare, updateUser);
+router.delete('/:id', authMiddleWare, deleteUser);
+router.put('/:id/follow', authMiddleWare, followUser);
+router.put('/:id/unfollow', authMiddleWare, unfollowUser);
 
-// Export the router using CommonJS export syntax
 module.exports = router;
